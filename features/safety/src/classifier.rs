@@ -198,18 +198,18 @@ fn contains_whole_word(haystack: &str, word: &str) -> bool {
     while let Some(pos) = haystack[start..].find(word) {
         let abs = start + pos;
         let before_ok = abs == 0
-            || haystack
-                .as_bytes()
-                .get(abs - 1)
-                .map_or(true, |&b| is_word_boundary(b as char));
-        let after_ok = haystack
-            .as_bytes()
-            .get(abs + word.len())
-            .map_or(true, |&b| is_word_boundary(b as char));
+            || haystack[..abs]
+                .chars()
+                .next_back()
+                .map_or(true, is_word_boundary);
+        let after_ok = haystack[abs + word.len()..]
+            .chars()
+            .next()
+            .map_or(true, is_word_boundary);
         if before_ok && after_ok {
             return true;
         }
-        start = abs + 1;
+        start = abs + word.len().max(1);
     }
     false
 }
@@ -440,6 +440,16 @@ mod tests {
         assert!(!contains_whole_word("addressed", "red"));
         assert!(!contains_whole_word("credited", "red"));
         assert!(contains_whole_word("classification: red.", "red"));
+    }
+
+    #[test]
+    fn whole_word_matching_multibyte() {
+        // u-umlaut is alphanumeric, so "red" is NOT a whole word inside "uredu"
+        assert!(!contains_whole_word("\u{00fc}red\u{00fc}", "red"));
+        // CJK ideographic comma is not alphanumeric, so "red" IS a whole word
+        assert!(contains_whole_word("\u{3001}red\u{3001}", "red"));
+        // CJK characters are alphanumeric
+        assert!(!contains_whole_word("\u{4e16}red\u{754c}", "red"));
     }
 
     #[test]
