@@ -30,7 +30,7 @@ Praxis replaces Classic's MCP routing engine. Classic's MCP server gets removed.
 ```
 
 **Praxis owns directly:** tools, resources, prompts, forwards, namespaces, services, interactions
-**Praxis proxies to Classic:** service-catalog, service-template, data-store, chat, code-execution, capabilities
+**Praxis proxies to Classic (artifact registry):** service-catalog, service-template, data-store, toolset-repos
 **Classic owns:** service catalogs, templates, data stores, chat proxy, code execution
 
 **Service addresses (gRPC endpoints for capability services):**
@@ -52,15 +52,11 @@ Praxis replaces Classic's MCP routing engine. Classic's MCP server gets removed.
 | `/api/v1/config/inference` | Praxis (direct) |
 | `/admin/*` | Praxis (static files) |
 | `/healthz` | Praxis (direct) |
-| `/api/v1/service-catalog` | Praxis → Classic proxy |
-| `/api/v1/service-template` | Praxis → Classic proxy |
-| `/api/v1/data-store` | Praxis → Classic proxy |
-| `/api/v1/capabilities` | Praxis → Classic proxy |
-| `/api/v1/chat` | Praxis → Classic proxy |
-| `/api/v1/management/info` | Praxis → Classic proxy |
-| `/api/v1/management/statistics` | Praxis → Classic proxy |
-| `/api/v2/code-execution` | Praxis → Classic proxy |
-| `/api/v2/tool-calls` | Praxis → Classic proxy |
+| `/api/v1/service-catalog` | Praxis → artifact registry proxy |
+| `/api/v1/service-template` | Praxis → artifact registry proxy |
+| `/api/v1/data-store` | Praxis → artifact registry proxy |
+| `/api/v1/toolset-repos` | Praxis → artifact registry proxy |
+| `/api/v1/artifact-registry/status` | Praxis (direct) — capability discovery |
 
 ## Changes in Praxis (wanaku-praxis repo)
 
@@ -91,11 +87,12 @@ Praxis replaces Classic's MCP routing engine. Classic's MCP server gets removed.
 - Covers the `ServiceEntry` type already in `apis/src/registry.rs`
 - Used by CLI and Operator to register capability gRPC addresses dynamically
 
-### 6. REST proxy module (new: `server/src/proxy.rs`)
-- Reverse-proxy for paths that Classic owns
-- Configured via `WANAKU_CLASSIC_URL` (e.g. `http://classic-svc:8080`)
-- When unset, proxied paths return 503 (standalone mode)
-- Simple path-prefix matching, forwards method/headers/body
+### 6. Artifact registry feature (new: `features/artifact-registry/`)
+- Feature crate implementing the `Feature` trait
+- Reverse-proxy for artifact registry paths (service-catalog, service-template, data-store, toolset-repos)
+- Configured via `WANAKU_ARTIFACT_REGISTRY_URL` (e.g. `http://classic-svc:8080`)
+- When unset, feature is a complete no-op
+- Status endpoint at `GET /api/v1/artifact-registry/status` for capability discovery
 
 ### 7. Admin UI static file serving
 - Serve React SPA from configurable directory at `/admin/*`
@@ -118,7 +115,7 @@ Praxis replaces Classic's MCP routing engine. Classic's MCP server gets removed.
 ### 10. Operator: separate Deployments
 - Praxis gets its own Deployment + ClusterIP Service (ports 8081, 8080)
 - Classic gets its own Deployment + internal-only ClusterIP Service (port 8080)
-- Praxis env: `WANAKU_CLASSIC_URL=http://internal-{name}-classic:8080`
+- Praxis env: `WANAKU_ARTIFACT_REGISTRY_URL=http://internal-{name}-classic:8080`
 - Operator registers capability service addresses with Praxis via `POST /api/v1/services`
 - Ingress/Route points to Praxis only
 

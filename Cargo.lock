@@ -4272,6 +4272,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "wanaku-feature-artifact-registry"
+version = "0.3.0"
+dependencies = [
+ "async-trait",
+ "http",
+ "praxis-proxy-filter",
+ "reqwest 0.12.28",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "wanaku-praxis-apis",
+ "yaml_serde",
+]
+
+[[package]]
 name = "wanaku-feature-chat"
 version = "0.3.0"
 dependencies = [
@@ -4384,7 +4399,6 @@ dependencies = [
  "praxis-proxy-filter",
  "praxis-proxy-protocol",
  "quixotic-plecostomus-core",
- "reqwest 0.13.4",
  "rust-embed",
  "serde",
  "serde_json",
@@ -4392,6 +4406,7 @@ dependencies = [
  "tokio",
  "tracing",
  "utoipa",
+ "wanaku-feature-artifact-registry",
  "wanaku-feature-chat",
  "wanaku-feature-intercept",
  "wanaku-feature-mcp-metadata",

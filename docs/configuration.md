@@ -18,7 +18,7 @@ These are defined in `apis/src/config.rs` and accessed via `wanaku_praxis_apis::
 | `WANAKU_INFERENCE_UPSTREAM` | `127.0.0.1:11434` | Inference backend for chat/safety features (OpenAI-compatible) |
 | `WANAKU_PERSIST_BACKEND` | _(unset = disabled)_ | Set to `"file"` to enable file-based registry persistence |
 | `WANAKU_PERSIST_PATH` | `/data/registry` | Directory where `registry.json` is read/written |
-| `WANAKU_CLASSIC_URL` | _(unset = disabled)_ | Classic Wanaku backend base URL (e.g., `http://classic:8080`) |
+| `WANAKU_ARTIFACT_REGISTRY_URL` | _(unset = disabled)_ | Artifact registry base URL (e.g., `http://classic:8080`) |
 | `WANAKU_UI_PATH` | _(unset = embedded)_ | Filesystem path to admin UI override (use for local dev) |
 | `WANAKU_AUTH_ISSUER` | _(unset = disabled)_ | OIDC issuer URL for RFC 9728 metadata endpoint |
 | `WANAKU_INFERENCE_API_KEY` | _(unset = no auth)_ | Bearer token API key for the inference upstream. Empty means no auth. |
@@ -29,7 +29,7 @@ These are defined in `apis/src/config.rs` and accessed via `wanaku_praxis_apis::
 export WANAKU_MGMT_LISTEN=0.0.0.0:9091
 export WANAKU_PERSIST_BACKEND=file
 export WANAKU_PERSIST_PATH=/var/lib/wanaku/registry
-export WANAKU_CLASSIC_URL=http://localhost:8080
+export WANAKU_ARTIFACT_REGISTRY_URL=http://localhost:8080
 cargo run --release
 ```
 
@@ -83,24 +83,19 @@ On startup, the server loads `registry.json` from `WANAKU_PERSIST_PATH`. On shut
 
 **Gotcha:** This is a crude backup mechanism. If the server crashes (SIGKILL, OOM, panic), the registry is lost. For production, use hybrid mode (see below) or implement a custom persistence backend.
 
-### Classic Wanaku Integration
+### Artifact Registry Integration
 
-Point `WANAKU_CLASSIC_URL` at a classic Wanaku backend to offload persistence and advanced features:
+Point `WANAKU_ARTIFACT_REGISTRY_URL` at a Wanaku Classic instance acting as an artifact registry for service catalogs, templates, data stores, and toolset repos:
 
 ```bash
-export WANAKU_CLASSIC_URL=http://classic-wanaku:8080
+export WANAKU_ARTIFACT_REGISTRY_URL=http://classic-wanaku:8080
 ```
 
-When set, Praxis proxies certain management API calls (e.g., service catalog operations) to the classic backend. The MCP endpoint remains pure Praxis—no proxying.
+When set, the `ArtifactRegistryFeature` proxies artifact-related management API calls (service-catalog, service-template, data-store, toolset-repos) to the registry backend. The MCP endpoint remains pure Praxis—no proxying.
 
-**Hybrid mode workflow:**
+When unset, the feature is a complete no-op and artifact registry routes return 404.
 
-1. Register tools/services in classic Wanaku via its REST API
-2. Praxis queries classic backend on startup to populate its registry
-3. MCP requests hit Praxis (port 8081), tool calls are routed to gRPC services
-4. Management API writes go to Praxis AND classic (eventual consistency)
-
-This is experimental. Not all classic features are supported.
+Check registry availability via `GET /api/v1/artifact-registry/status`.
 
 ### Admin UI Override
 
