@@ -142,8 +142,8 @@ impl SafetyClassifier {
                 parse_safety_level(&content)
             }
             None => {
-                tracing::warn!("safety classifier LLM call failed, defaulting to green");
-                SafetyLevel::Green
+                tracing::warn!("safety classifier LLM call failed, defaulting to yellow");
+                SafetyLevel::Yellow
             }
         }
     }
