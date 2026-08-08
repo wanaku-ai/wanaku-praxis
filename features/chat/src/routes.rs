@@ -35,6 +35,7 @@ fn raw_json_response(body: Vec<u8>) -> Response<Vec<u8>> {
         .status(200)
         .header("Content-Type", "application/json")
         .header("Content-Length", body.len())
+        .header("Access-Control-Allow-Origin", wanaku_praxis_apis::config::ENV.cors_origin.as_str())
         .body(body)
         .expect("valid json response")
 }
@@ -47,6 +48,7 @@ fn json_err(status: u16, message: &str) -> Response<Vec<u8>> {
         .status(status)
         .header("Content-Type", "application/json")
         .header("Content-Length", body.len())
+        .header("Access-Control-Allow-Origin", wanaku_praxis_apis::config::ENV.cors_origin.as_str())
         .body(body)
         .expect("valid json error response")
 }
@@ -222,6 +224,7 @@ pub(crate) async fn handle_chat_completions(
         .status(200)
         .header("Content-Type", "text/plain")
         .header("Content-Length", response_body.len())
+        .header("Access-Control-Allow-Origin", wanaku_praxis_apis::config::ENV.cors_origin.as_str())
         .body(response_body)
         .unwrap_or_default()
 }
