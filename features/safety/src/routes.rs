@@ -35,10 +35,16 @@ pub(crate) fn handle_safety_get(state: &SafetyState) -> Response<Vec<u8>> {
 }
 
 pub(crate) fn handle_safety_update(state: &SafetyState, body: &str) -> Response<Vec<u8>> {
-    let config: SafetyConfig = match serde_json::from_str(body) {
+    let mut config: SafetyConfig = match serde_json::from_str(body) {
         Ok(c) => c,
         Err(e) => return json_err(400, &format!("invalid safety config: {e}")),
     };
+
+    if config.llm_api_key.is_empty() {
+        if let Some(existing) = state.current_config() {
+            config.llm_api_key = existing.llm_api_key;
+        }
+    }
 
     info!(model = %config.llm_model, url = %config.llm_url, "safety classifier updated via management API");
     state.configure(config.clone());
