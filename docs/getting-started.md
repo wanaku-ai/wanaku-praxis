@@ -256,7 +256,7 @@ All configuration is environment-first. Common vars:
 | `WANAKU_MGMT_LISTEN` | `0.0.0.0:8080` | Management API listen address |
 | `WANAKU_PERSIST_BACKEND` | _(unset)_ | Set to `"file"` to persist registry to disk |
 | `WANAKU_PERSIST_PATH` | `/data/registry` | Directory for `registry.json` |
-| `WANAKU_CLASSIC_URL` | _(unset)_ | Classic proxy base URL (for hybrid mode) |
+| `WANAKU_ARTIFACT_REGISTRY_URL` | _(unset)_ | Artifact registry base URL (for hybrid mode) |
 
 See [Configuration](./configuration.md) for the full list.
 

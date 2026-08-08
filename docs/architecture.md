@@ -189,7 +189,7 @@ export WANAKU_PERSIST_PATH=/data/registry
 
 On startup, the server loads `registry.json` from `WANAKU_PERSIST_PATH`. On shutdown, it writes back. This is a crude backup mechanism, not a production database.
 
-For production, point `WANAKU_CLASSIC_URL` at a classic Wanaku backend and treat Praxis as a stateless proxy.
+For production, point `WANAKU_ARTIFACT_REGISTRY_URL` at a classic Wanaku instance to use it as an artifact registry for service catalogs, templates, and data stores.
 
 ## Tool Routing: gRPC vs. MCP Forward
 
@@ -396,17 +396,17 @@ Run Praxis as the only MCP server. All tools and services are gRPC-based, regist
 **Pros:** Simple, no dependencies
 **Cons:** No persistence, no classic Wanaku features (service catalogs, complex Camel routes)
 
-### Hybrid (Praxis + Classic Backend)
+### Hybrid (Praxis + Artifact Registry)
 
-Run Praxis as a stateless proxy. Point `WANAKU_CLASSIC_URL` at a classic Wanaku backend:
+Run Praxis alongside a classic Wanaku instance acting as an artifact registry:
 
 ```bash
-export WANAKU_CLASSIC_URL=http://classic-wanaku:8080
+export WANAKU_ARTIFACT_REGISTRY_URL=http://classic-wanaku:8080
 ```
 
-Praxis handles MCP protocol, namespace isolation, and safety features. Classic handles persistence, service catalogs, and advanced Camel integrations.
+Praxis handles MCP protocol, namespace isolation, and safety features. The artifact registry provides service catalogs, templates, data stores, and toolset repos.
 
-**Pros:** Best of both worlds—Praxis performance, classic features
+**Pros:** Best of both worlds—Praxis performance, classic artifact management
 **Cons:** Two servers to manage
 
 ### Kubernetes

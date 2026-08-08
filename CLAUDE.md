@@ -350,7 +350,7 @@ Unit tests are in each module (`#[cfg(test)]` blocks). Integration tests would g
 | `WANAKU_INFERENCE_UPSTREAM` | `127.0.0.1:11434` | Inference backend address |
 | `WANAKU_PERSIST_BACKEND` | _(unset = disabled)_ | Set to `"file"` to enable file persistence |
 | `WANAKU_PERSIST_PATH` | `/data/registry` | Directory for `registry.json` |
-| `WANAKU_CLASSIC_URL` | _(unset = disabled)_ | Classic proxy base URL |
+| `WANAKU_ARTIFACT_REGISTRY_URL` | _(unset = disabled)_ | Artifact registry (Classic) base URL |
 | `WANAKU_UI_PATH` | _(unset = embedded)_ | Filesystem path to admin UI override |
 | `WANAKU_AUTH_ISSUER` | _(unset = disabled)_ | OIDC issuer URL for RFC 9728 metadata (auth handled by oauth2-proxy) |
 | `WANAKU_INFERENCE_API_KEY` | _(unset = no auth)_ | Bearer token API key for the inference upstream. Empty means no auth. |
