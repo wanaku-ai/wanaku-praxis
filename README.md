@@ -1,5 +1,7 @@
 # Wanaku Praxis
 
+**NOTE**: this was the old home for the Praxis-based PoC. As of August 12th, this work was merged into the main [Wanaku](https://github.com/wanaku-ai/wanaku) repository. This repository was put into read-only mode.
+
 A Rust-based MCP router built on the [Praxis](https://github.com/praxis-proxy/praxis) proxy framework. Think of it as the proof-of-concept sibling to [Wanaku](https://github.com/opiske/wanaku)—same routing logic, different runtime, zero JVM overhead.
 
 ## What It Does
